@@ -5,7 +5,6 @@ use std::sync::Arc;
 use std::time::Duration;
 use tauri::{AppHandle, Emitter};
 use tokio::time;
-use rand;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TorrentProgressEvent {
@@ -36,7 +35,6 @@ pub struct PeerConnectedEvent {
     pub torrent_id: String,
     pub peer_id: String,
     pub peer_address: String,
-    pub webrtc_capable: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -65,36 +63,18 @@ impl EventManager {
         // Start periodic stats updates
         tokio::spawn(async move {
             let mut interval = time::interval(Duration::from_secs(1));
-            
+
             loop {
                 interval.tick().await;
-                let (updated_torrents, completed_torrents, errored_torrents) = torrent_manager.update_torrent_stats().await;
-                
+                let (updated_torrents, completed_torrents, errored_torrents) =
+                    torrent_manager.update_torrent_stats().await;
+
                 // Emit progress events for all active torrents
                 for torrent in &updated_torrents {
                     let progress_event = EventManager::torrent_info_to_progress_event(torrent);
                     event_manager.emit_torrent_progress(progress_event);
-                    
-                    // Simulate peer connections/disconnections for active torrents
-                    if torrent.peers > 0 && rand::random::<f32>() < 0.05 { // 5% chance
-                        let peer_event = PeerConnectedEvent {
-                            torrent_id: torrent.id.clone(),
-                            peer_id: format!("peer_{}", rand::random::<u32>()),
-                            peer_address: format!("192.168.1.{}", rand::random::<u8>()),
-                            webrtc_capable: rand::random::<bool>(),
-                        };
-                        event_manager.emit_peer_connected(peer_event);
-                    }
-                    
-                    if torrent.peers > 1 && rand::random::<f32>() < 0.03 { // 3% chance
-                        let peer_event = PeerDisconnectedEvent {
-                            torrent_id: torrent.id.clone(),
-                            peer_id: format!("peer_{}", rand::random::<u32>()),
-                        };
-                        event_manager.emit_peer_disconnected(peer_event);
-                    }
                 }
-                
+
                 // Emit completion events for newly completed torrents
                 for torrent in &completed_torrents {
                     let completed_event = TorrentCompletedEvent {
@@ -105,12 +85,12 @@ impl EventManager {
                     };
                     event_manager.emit_torrent_completed(completed_event);
                 }
-                
+
                 // Emit error events for torrents that encountered errors
-                for torrent in &errored_torrents {
+                for torrent_id in &errored_torrents {
                     let error_event = TorrentErrorEvent {
-                        torrent_id: torrent.id.clone(),
-                        error_message: "Failed to download metadata".to_string(),
+                        torrent_id: torrent_id.clone(),
+                        error_message: "An error occurred with the torrent".to_string(),
                     };
                     event_manager.emit_torrent_error(error_event);
                 }
