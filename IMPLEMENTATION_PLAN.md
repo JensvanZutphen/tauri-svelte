@@ -16,21 +16,26 @@ Building a lightweight desktop torrent client with integrated P2P chat using **H
 - [x] Install and configure `shadcn-svelte` for UI components (use Context7 MCP for docs)
 - [x] Set up proper folder structure with TypeScript configuration
 - [x] Configure TypeScript for strict type checking and Svelte 5 compatibility
-- [ ] Create state management using Svelte 5 runes ($state, $derived, $effect)
+- [x] Create state management using Svelte 5 runes ($state, $derived, $effect)
+  > ✅ **COMPLETED**: Fixed Svelte 5 runes by renaming state files to `.svelte.ts` format
 
 ### 1.2 Rust BitTorrent Backend
-- [ ] Implement Tauri commands for torrent operations (`add_torrent`, `remove_torrent`, etc.)
-- [ ] Create Rust torrent manager using `rqbit` session
-- [ ] Set up event emission from Rust to frontend (progress, peers, completion)
-- [ ] Handle torrent lifecycle management (add, remove, pause, resume)
+- [x] Implement Tauri commands for torrent operations (`add_torrent`, `remove_torrent`, etc.)
+- [x] Create Rust torrent manager using `rqbit` session
+- [x] Set up event emission from Rust to frontend (progress, peers, completion)
+- [x] Handle torrent lifecycle management (add, remove, pause, resume)
+  > ✅ **COMPLETED**: Rust backend compiles successfully with librqbit 8.1.1
 - [ ] Test with sample magnet links via TCP/UDP connections
+  > 🔄 **NEXT**: End-to-end testing with real magnet links needed
 
 ### 1.3 Frontend Integration
-- [ ] Create TypeScript API layer to call Tauri commands with strict typing
-- [ ] Design main application layout with TailwindCSS + shadcn-svelte components
-- [ ] Create torrent list component using shadcn-svelte data tables with Svelte 5 $state/$derived
-- [ ] Implement add torrent functionality with TypeScript forms and shadcn-svelte components
-- [ ] Show real-time progress using $effect runes to listen to Rust backend events
+- [x] Create TypeScript API layer to call Tauri commands with strict typing
+- [x] Design main application layout with TailwindCSS + shadcn-svelte components
+- [x] Create torrent list component using shadcn-svelte data tables with Svelte 5 $state/$derived
+- [x] Implement add torrent functionality with TypeScript forms and shadcn-svelte components
+- [x] Show real-time progress using $effect runes to listen to Rust backend events
+  > ✅ **COMPLETED**: Modern UI with shadcn-svelte components and Svelte 5 state management
+  > 🔄 **NEXT**: Test the complete application with `npm run tauri dev`
 
 **Deliverable**: Working native BitTorrent client with full TCP/UDP compatibility
 
