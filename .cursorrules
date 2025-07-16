@@ -1,0 +1,154 @@
+# TorChat - Desktop Torrent Client with Integrated Chat
+
+## Project Overview
+TorChat is a lightweight desktop torrent client built with **SvelteKit** inside **Tauri v2**. It's a Single Page Application (SPA) with no server-side rendering (SSR) that embeds **WebTorrent JS** in the renderer for true peer-to-peer downloads over WebRTC data channels. Each torrent gets its own chatroom by opening RTCDataChannels on peer connections using STUN-only ICE (no TURN servers) for fully decentralized messaging.
+
+## Technology Stack
+- **Frontend**: SvelteKit v2 (SPA mode), TailwindCSS for styling
+- **Backend**: Tauri v2 (Rust)
+- **P2P Engine**: WebTorrent JS for BitTorrent protocol over WebRTC
+- **Real-time Chat**: RTCDataChannel for peer-to-peer messaging
+- **Build Tools**: Vite, npm
+- **Development**: WSL2/Linux environment
+
+## Architecture Guidelines
+
+### File Structure
+- `src/routes/` - SvelteKit routes and pages
+- `src/lib/` - Shared components and utilities
+- `src/lib/components/` - Reusable Svelte components
+- `src/lib/stores/` - Svelte stores for state management
+- `src/lib/torrent/` - WebTorrent integration and torrent management
+- `src/lib/chat/` - P2P chat functionality via RTCDataChannel
+- `src/lib/utils/` - Helper functions and utilities
+- `src-tauri/` - Rust backend code
+- `static/` - Static assets
+
+### State Management
+- Use **Svelte stores** for global state (torrents, peers, chat messages)
+- Keep torrent state and chat state separate but linked
+- Implement reactive patterns for real-time updates
+
+### Component Patterns
+- Create reusable components for torrent items, chat messages, file lists
+- Use Svelte's reactive statements (`$:`) for computed values
+- Implement proper cleanup for WebRTC connections in `onDestroy`
+
+## Development Guidelines
+
+### Code Style
+- Use TypeScript where beneficial, but JavaScript is acceptable
+- Follow Svelte/SvelteKit conventions
+- Use TailwindCSS for styling with semantic class names
+- Prefer composition over inheritance
+- Keep components small and focused
+
+### WebTorrent Integration
+- Initialize WebTorrent client once and reuse globally
+- Handle torrent lifecycle events (start, progress, complete, error)
+- Implement proper error handling for failed downloads
+- Show real-time progress updates
+
+### P2P Chat Implementation
+- Create RTCDataChannel for each peer connection
+- Implement message protocols (join, leave, message, typing indicators)
+- Handle peer discovery and connection management
+- Store chat history locally (consider IndexedDB)
+- Implement message encryption/signing for security
+
+### Performance Considerations
+- Limit number of active torrents to prevent resource exhaustion
+- Implement pagination for large file lists
+- Use virtual scrolling for chat messages if needed
+- Debounce search and filter operations
+- Clean up resources when components unmount
+
+### Security Guidelines
+- Validate all torrent files and magnet links
+- Sanitize chat messages to prevent XSS
+- Don't auto-download executable files
+- Implement user consent for file downloads
+- Consider implementing peer verification
+
+## Key Features to Implement
+
+### Torrent Management
+- Add torrents via magnet links or .torrent files
+- Display download progress, speed, and ETA
+- Pause/resume/remove torrents
+- File selection within multi-file torrents
+- Seeding management
+
+### Chat Functionality
+- Per-torrent chat rooms
+- Real-time messaging between peers
+- Online peer indicators
+- Message history persistence
+- Optional: typing indicators, emoji support
+
+### UI/UX Features
+- Dark/light theme toggle
+- Responsive design
+- Drag-and-drop torrent adding
+- System notifications for completed downloads
+- Search and filter torrents
+
+## Testing Strategy
+- Unit tests for utility functions
+- Integration tests for WebTorrent functionality
+- E2E tests for critical user flows
+- Test P2P chat with multiple instances
+- Performance testing with multiple active torrents
+
+## Build & Deployment
+- Development: `npm run dev` (requires Rust toolchain)
+- Production build: `npm run build`
+- Ensure all Tauri dependencies are installed on target systems
+- Test builds on multiple platforms (Linux, Windows, macOS)
+
+## Common Patterns
+
+### Adding New Features
+1. Design the UI component first
+2. Implement the underlying functionality
+3. Connect with appropriate stores
+4. Add error handling and loading states
+5. Test with real torrents and peers
+
+### WebRTC Connection Handling
+```javascript
+// Always handle connection state changes
+peer.on('connect', () => { /* setup data channel */ });
+peer.on('error', (err) => { /* handle gracefully */ });
+peer.on('close', () => { /* cleanup resources */ });
+```
+
+### Svelte Store Updates
+```javascript
+// Use immutable updates for arrays/objects
+torrents.update(list => [...list, newTorrent]);
+// Notify about specific torrent changes
+torrentProgress.set({ id: torrentId, progress: percent });
+```
+
+## Dependencies Notes
+- `@tauri-apps/api` - Tauri frontend APIs
+- `webtorrent` - BitTorrent client for browsers
+- `simple-peer` - WebRTC peer connections (if not using WebTorrent's built-in)
+- Consider `idb` for IndexedDB if implementing message persistence
+
+## Debugging Tips
+- Use browser dev tools for WebRTC debugging
+- Monitor WebTorrent events for torrent issues
+- Check Tauri logs for backend problems
+- Test P2P functionality with multiple browser instances
+- Use network tab to verify no unexpected server requests
+
+## Future Enhancements
+- DHT support for better peer discovery
+- Bandwidth limiting controls
+- Advanced chat features (file sharing in chat)
+- Plugin system for extensions
+- Mobile companion app
+
+Remember: This is a P2P application, so always test with multiple instances to verify real-world functionality. 

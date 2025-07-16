@@ -1,8 +1,8 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/schema.json",
-	"productName": "tauri-sveltekit",
+	"productName": "TorChat",
 	"version": "0.1.0",
-	"identifier": "com.auros.tauri-sveltekit",
+	"identifier": "com.torchat.app",
 	"build": {
 		"beforeBuildCommand": "npm run sveltekit:build",
 		"beforeDevCommand": "npm run sveltekit:dev",
@@ -12,7 +12,7 @@
 	"app": {
 		"windows": [
 			{
-				"title": "Tauri x SvelteKit",
+				"title": "TorChat",
 				"width": 800,
 				"height": 600,
 				"resizable": true,
@@ -23,6 +23,7 @@
 			"csp": null
 		}
 	},
+
 	"bundle": {
 		"active": true,
 		"targets": "all",
